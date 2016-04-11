@@ -1,0 +1,39 @@
+#!/usr/bin/env bash -e
+
+COLOR_BLUE='\033[34m'
+COLOR_GREEN='\033[32m'
+COLOR_RESET='\033[0m'
+COLOR_YELLOW='\033[33m'
+
+header() {
+  echo -e "${COLOR_BLUE}${1}${COLOR_RESET}"
+}
+
+pull() {
+  header 'Pulling'
+  git fetch --all
+  git pull --all
+}
+
+push() {
+  header 'Pushing'
+  git push --all gitlab
+  git push --tags gitlab
+}
+
+update() {
+  local REPOSITORY=$1
+
+  echo
+  echo -e "${COLOR_YELLOW}${REPOSITORY} started${COLOR_RESET}"
+  cd ${REPOSITORY}
+  pull ${REPOSITORY}
+  push
+  cd ..  
+  echo -e "${COLOR_GREEN}${REPOSITORY} finished${COLOR_RESET}"
+  echo
+}
+
+while read REPOSITORY; do
+  update $REPOSITORY
+done
